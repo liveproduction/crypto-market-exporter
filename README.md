@@ -96,8 +96,9 @@ leaves `public/latest` intact. Local replacement uses a backup and rollback;
 it is intended for one CLI writer, not a live web-server folder. If a process is
 interrupted during the swap, inspect `public/.latest-backup` before retrying.
 Public publication deploys one complete validated Pages artifact, never a set
-of individual file updates. Data files are generated artifacts and are ignored
-by Git. Export logs and the workflow artifact contain the real manifest.
+of individual file updates. Data files are ignored by Git on `main` and are also
+published as a complete snapshot on the dedicated `data` branch. Export logs and
+the workflow artifact contain the real manifest.
 
 ## GitHub Pages and daily runs
 
@@ -132,6 +133,55 @@ public dataset available. A smoke-test failure after deployment is reported as a
 workflow failure; it does not automatically roll back an already deployed artifact.
 Clients reading across a deployment should verify the manifest hashes and retry
 if they encounter an old/new mismatch.
+
+## GitHub repository fallback (`data` branch)
+
+GitHub Pages remains enabled. The same workflow also publishes the exact same
+validated `public/latest` bytes as `latest/` on the dedicated **`data` branch**.
+This adds no paid infrastructure, database, server or custom secret. The data job
+uses GitHub's built-in token with `contents: write`; other jobs keep their existing
+permissions. Both publications consume the same export; no second Binance fetch
+is performed. The temporary transfer artifact expires after one day.
+
+Repository paths for a connected GitHub reader:
+
+- repository: `liveproduction/crypto-market-exporter`
+- branch/ref: `data`
+- `latest/manifest.json`
+- `latest/1d-part-001.txt`
+- `latest/4h-part-001.txt` (read all parts listed in the manifest dynamically)
+
+Browse: https://github.com/liveproduction/crypto-market-exporter/tree/data/latest
+
+Direct raw HTTPS fallback:
+
+- https://raw.githubusercontent.com/liveproduction/crypto-market-exporter/data/latest/manifest.json
+- https://raw.githubusercontent.com/liveproduction/crypto-market-exporter/data/latest/1d-part-001.txt
+- https://raw.githubusercontent.com/liveproduction/crypto-market-exporter/data/latest/4h-part-001.txt
+
+`publish_data.py` validates a frozen copy and checks it against the existing data
+snapshot before publication. Every update creates a **root commit with no parent**
+containing only the current manifest and all parts. An atomic, explicit
+`--force-with-lease` replaces only `refs/heads/data`; it refuses to overwrite a
+concurrent update. The source checkout, `main` history and Pages configuration are
+untouched. An identical retry is a no-op. A stale, incomplete or corrupt export
+fails before push, preserving the previous data snapshot. Unexpected files on
+`data` also stop publication instead of silently deleting unrelated content.
+
+There is one reachable commit on `data`; GitHub may retain unreachable old objects
+until its garbage collection runs. Do not add manual work or branch protection
+that forbids these snapshot replacements to this dedicated generated-data branch.
+Pages and data publication jobs run independently after validation: a failure in
+one is visible in Actions and does not prevent the other from publishing. They
+can briefly expose different snapshots during deployment or if one job fails.
+
+For a consistent connector read, resolve `data` to its current commit SHA once,
+then read the manifest and every part at that **same SHA**, checking hashes/counts.
+Branch/raw URLs point to the latest snapshot and may change between requests.
+Actual ChatGPT connector ingestion must still be checked in a ChatGPT session
+with GitHub connected and a reader that supports this explicit branch/ref. Public
+GitHub availability alone does not prove that a connector indexes non-default
+branches or reads an entire file of this size.
 
 FolioEye remains running. Next: compare OHLCV, quote volume, trades, taker flows,
 row counts and timestamps for BTC/ETH/SOL over several successful daily runs.

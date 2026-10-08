@@ -38,6 +38,31 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: public
+      - name: Save the same snapshot for data branch publication
+        uses: actions/upload-artifact@v4
+        with:
+          name: latest-snapshot
+          path: public/latest
+          if-no-files-found: error
+          retention-days: 1
+
+  publish-data:
+    needs: export
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: latest-snapshot
+          path: public/latest
+      - name: Publish validated snapshot atomically on data
+        run: python publish_data.py
 
   deploy:
     needs: export
