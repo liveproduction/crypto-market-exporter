@@ -1,0 +1,68 @@
+name: Daily Binance market export
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 7 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: binance-public-pages
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Tests (no dependencies to install)
+        run: python -m unittest discover -s tests -v
+      - name: Read Pages configuration
+        id: pages
+        uses: actions/configure-pages@v5
+      - name: Export closed candles and compare previous manifest
+        run: python exporter.py export --previous-url '${{ steps.pages.outputs.base_url }}/latest'
+      - name: Independently validate generated files
+        run: python exporter.py validate public/latest
+      - name: Disable Jekyll processing
+        run: touch public/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: export
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy complete validated artifact
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify published files anonymously, including hashes
+        env:
+          PUBLIC_URL: ${{ steps.deployment.outputs.page_url }}latest
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if python exporter.py verify-url "$PUBLIC_URL"; then exit 0; fi
+            sleep 10
+          done
+          exit 1
