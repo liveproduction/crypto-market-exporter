@@ -7,7 +7,7 @@ import re
 import subprocess
 import tempfile
 
-from exporter import require, validate_export
+from exporter import require, validate_export, validate_previous_export
 
 DATA_REF = "refs/heads/data"
 SNAPSHOT_PATH = re.compile(r"latest/(manifest\.json|(?:1d|4h)-part-[0-9]{3,}\.txt)\Z")
@@ -28,13 +28,13 @@ def snapshot_at(repo, commit):
     return {path: git(repo, "show", f"{commit}:{path}") for path in paths}
 
 
-def materialize(files, directory):
+def materialize(files, directory, previous=False):
     latest = directory / "latest"
     latest.mkdir(parents=True)
     for name, content in files.items():
         require(SNAPSHOT_PATH.fullmatch(name), "Unexpected snapshot path")
         (directory / name).write_bytes(content)
-    return validate_export(latest)
+    return validate_previous_export(latest) if previous else validate_export(latest)
 
 
 def publish_data(latest, repo):
@@ -53,7 +53,7 @@ def publish_data(latest, repo):
             git(repo, "fetch", "--no-tags", "origin", DATA_REF)
             expected = git(repo, "rev-parse", "FETCH_HEAD").decode().strip()
             old_files = snapshot_at(repo, expected)
-            previous = materialize(old_files, temporary / "previous")
+            previous = materialize(old_files, temporary / "previous", previous=True)
             if old_files == files:
                 print(f"data already contains this exact snapshot: {expected}")
                 return expected

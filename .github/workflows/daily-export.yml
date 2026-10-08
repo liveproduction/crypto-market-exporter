@@ -15,7 +15,7 @@ concurrency:
 jobs:
   export:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     permissions:
       contents: read
       pages: read
@@ -45,6 +45,15 @@ jobs:
           path: public/latest
           if-no-files-found: error
           retention-days: 1
+      - name: Save incomplete diagnostic manifest on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: incomplete-export-diagnostics
+          path: .local/incomplete-manifest.json
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
 
   publish-data:
     needs: export

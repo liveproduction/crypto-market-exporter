@@ -1,5 +1,8 @@
 # Bootstrap specification
 
+Phase 0 below is the original validated baseline. V1.1 extends its universe as
+described at the end of this document; the architecture and CSV columns remain unchanged.
+
 ## Phase 0 — feasibility first
 
 Before building the full exporter, prove the complete transport chain with only:
@@ -144,4 +147,33 @@ Do not add:
 
 ## Publication caveat
 
-The repository is currently private. Verify whether stable unauthenticated public hosting is available with the current GitHub plan. If private GitHub Pages is not publicly accessible, stop and report the smallest zero/near-zero-cost alternative instead of silently introducing infrastructure.
+The repository is now public. GitHub Pages and the dedicated `data` branch are
+both enabled and validated. Preserve both publication paths.
+
+## V1.1 — production extension
+
+Phase 0 was independently read and validated through the GitHub connector at
+data commit `465afef039c5e1f7043799bc9d83f3e30699f93e`, generated at
+`2026-10-08T20:16:14.658Z`. Do not repeat that feasibility milestone.
+
+- Use exactly the 47 ordered Binance Spot symbols in `config/symbols.json`.
+- Request 1826 days of 1D and 90 days of 4H; export all available closed candles.
+- Recent listings need not have a full five-year history, but every symbol must
+  have at least one valid closed candle in each dataset.
+- Preserve duplicate/OHLC/volume/closure validation and reject internal gaps in
+  each available symbol history. Record actual dates and row counts per symbol.
+- Extend dataset diagnostics with requested/exported/failed symbols, symbol
+  errors, per-symbol rows/history and requested history bounds. Preserve schema
+  version 1 and the existing CSV field semantics.
+- An incomplete attempt must set `status: incomplete`, identify failed symbols,
+  retain a diagnostic manifest outside `public/`, fail visibly and leave the
+  previous complete latest snapshot unchanged on both publication paths.
+- Keep sequential paced pagination, bounded retries, dynamic splitting at
+  3,500,000 bytes, intact symbol groups and oversized single-symbol flags.
+- Preserve Pages and the atomic replacement of the single-root-commit `data`
+  snapshot. Publish the exact same validated files through both paths.
+- After a full manual workflow, resolve `data` to a SHA and validate every actual
+  part, hashes, row counts, 47-symbol universe, headers and closed candles at that SHA.
+- Keep FolioEye running. Prepare a latest-common-D1 comparison sample containing
+  BTCUSDT, ETHUSDT, SOLUSDT, MORPHOUSDT, GMXUSDT and AEROUSDT.
+- Stop after V1.1 validation; do not add indicators or new infrastructure.

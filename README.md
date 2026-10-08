@@ -61,11 +61,16 @@ The existing FolioEye exporter remains the reference until this exporter has bee
 
 See [BOOTSTRAP_SPEC.md](BOOTSTRAP_SPEC.md) and issue #1.
 
-## Phase 0 implementation
+## V1.1 production universe
 
-Python 3.11+; **no third-party dependencies**. The symbol universe is deliberately
-fixed to BTCUSDT, ETHUSDT and SOLUSDT until the transport chain and FolioEye parity
-have been validated. Data comes from Binance's official unauthenticated
+Python 3.11+; **no third-party dependencies**. The 47 Spot symbols are configured
+in [`config/symbols.json`](config/symbols.json), a manually editable ordered JSON
+list. Empty, duplicate or malformed symbols are rejected. Phase 0 was validated
+through the GitHub connector at data commit
+`465afef039c5e1f7043799bc9d83f3e30699f93e`, generated on
+`2026-10-08T20:16:14.658Z` (5478 D1 / 1620 H4 actual rows, closed candles and hashes
+verified). V1.1 expands the universe without changing that publication architecture
+or the 18-column contract. Data comes from Binance's official unauthenticated
 market-data-only host, `https://data-api.binance.vision`, using `/api/v3/time` and
 `/api/v3/klines`. No Binance credentials are read or sent.
 
@@ -76,12 +81,23 @@ python exporter.py validate public/latest
 python exporter.py verify-url https://liveproduction.github.io/crypto-market-exporter/latest
 ```
 
-`export` captures Binance server time once, then fetches exactly 1826 complete UTC
-days and 90 days of complete 4-hour candles. The current interval is excluded.
-Each symbol must have every expected timestamp, in order; missing history fails
-the entire export. This requires 5478 D1 rows and 1620 H4 rows in Phase 0.
-`history_start` is the first candle open time and `history_end` the last candle
-close time. All timestamps include milliseconds and a UTC `Z` suffix. Decimals
+`export` captures Binance server time once, then requests 1826 UTC days and 90
+days of 4-hour candles. The current interval is excluded. Every configured symbol
+must have at least one valid closed candle within each requested period. A recent
+listing's shorter history is accepted; missing symbols, duplicates, malformed
+data or internal gaps in its returned history fail the complete export.
+Requests and pages are sequential and paced at 0.25 seconds per page.
+
+Dataset `history_start` / `history_end` describe the actual earliest candle open
+and latest candle close. `requested_history_start` / `requested_history_end`
+record the requested window. Every dataset also includes `requested_symbols`,
+`exported_symbols`, `failed_symbols`, `symbol_errors`, `symbol_rows` and
+`symbol_history` (actual start/end/row count for each exported symbol). These are
+additive diagnostics; `schema_version` remains 1. Legacy V1.0 3-symbol snapshots
+can still be validated when comparing the previous publication, without accepting
+them as a new production export.
+
+All timestamps include milliseconds and a UTC `Z` suffix. Decimals
 use Python `Decimal`; the quote buy ratio has 28 significant digits, and is `0`
 when quote volume is zero. Every part has the exact CSV header and UTF-8 content.
 
@@ -89,10 +105,15 @@ The size target is 3,500,000 bytes including the header. Splitting keeps each
 symbol together. An oversized single-symbol part is explicitly marked with
 `oversized: true`; multi-symbol oversized parts are rejected. Validation reads
 the written files again and checks hashes, counts, fields, derived values,
-complete history, manifest consistency and symbol boundaries.
+available history, manifest consistency and symbol boundaries.
 
 Generation happens in a temporary directory. A validation or download failure
-leaves `public/latest` intact. Local replacement uses a backup and rollback;
+leaves `public/latest` intact. If any symbol fails after retries or returns no
+closed candles, the exporter continues collecting diagnostics for the other
+symbols, writes `.local/incomplete-manifest.json` with `status: incomplete` and
+explicit per-dataset `failed_symbols` / `symbol_errors`, and exits unsuccessfully.
+The workflow retains this diagnostic manifest as a seven-day artifact; no parts
+from an incomplete generation are published. Local replacement uses a backup and rollback;
 it is intended for one CLI writer, not a live web-server folder. If a process is
 interrupted during the swap, inspect `public/.latest-backup` before retrying.
 Public publication deploys one complete validated Pages artifact, never a set
@@ -104,7 +125,7 @@ the workflow artifact contain the real manifest.
 
 The repository must remain public on GitHub Free. In repository **Settings →
 Pages**, choose **GitHub Actions** as the source. Run **Actions → Daily Binance
-market export → Run workflow** to prove Phase 0. The workflow also runs daily at
+market export → Run workflow** for the production batch. The workflow also runs daily at
 07:15 UTC (GitHub scheduled runs can be delayed). It tests, exports, independently
 validates, uploads the full artifact, deploys it, and downloads the public files
 without authentication to check their hashes and contents. Runs are serialized.
@@ -118,7 +139,7 @@ HTTP 404 means there is no previous export; other fetch failures stop the run.
 Timeouts and transient errors have five attempts with exponential backoff.
 HTTP 429 honors numeric `Retry-After` up to 60 seconds; a longer wait fails closed.
 HTTP 403/418/451 fails immediately; no alternate host is used to bypass access
-restrictions. A blocked GitHub runner means Phase 0 is not validated.
+restrictions. A blocked GitHub runner fails the batch visibly and preserves the last valid export.
 
 Public endpoints after the first successful deployment:
 
@@ -178,11 +199,11 @@ can briefly expose different snapshots during deployment or if one job fails.
 For a consistent connector read, resolve `data` to its current commit SHA once,
 then read the manifest and every part at that **same SHA**, checking hashes/counts.
 Branch/raw URLs point to the latest snapshot and may change between requests.
-Actual ChatGPT connector ingestion must still be checked in a ChatGPT session
-with GitHub connected and a reader that supports this explicit branch/ref. Public
-GitHub availability alone does not prove that a connector indexes non-default
-branches or reads an entire file of this size.
+Phase 0 connector ingestion has been independently confirmed. After V1.1, use
+the connector again to read every part at the pinned production SHA, rather than
+validating only the manifest. The expanded part count is dynamic.
 
 FolioEye remains running. Next: compare OHLCV, quote volume, trades, taker flows,
-row counts and timestamps for BTC/ETH/SOL over several successful daily runs.
-Do not extend the universe or retire FolioEye before that comparison is approved.
+row counts and timestamps for BTC/ETH/SOL/MORPHO/GMX/AERO over common closed D1
+candles and several successful daily runs. Do not retire FolioEye before that
+comparison is approved. No technical indicators are computed by this repository.

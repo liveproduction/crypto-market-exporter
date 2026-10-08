@@ -1,4 +1,4 @@
-"""Phase 0 Binance Public Spot exporter. Python 3.11+, standard library only."""
+"""Binance Public Spot exporter. Python 3.11+, standard library only."""
 
 import argparse
 import csv
@@ -6,8 +6,10 @@ import hashlib
 import io
 import json
 from pathlib import Path
+import re
 import shutil
 import socket
+import sys
 import tempfile
 import time
 from datetime import datetime, timezone
@@ -17,7 +19,7 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 SOURCE = "BINANCE_PUBLIC_SPOT"
-SYMBOLS = ("BTCUSDT", "ETHUSDT", "SOLUSDT")
+PHASE0_SYMBOLS = ("BTCUSDT", "ETHUSDT", "SOLUSDT")
 DAY = 86_400_000
 DATASETS = {"1d": (1826, DAY), "4h": (90, DAY // 6)}
 MAX_BYTES = 3_500_000
@@ -28,6 +30,21 @@ FIELDS = "source,symbol,timeframe,open_time_utc,open,high,low,close,volume,close
 def require(condition, message):
     if not condition:
         raise ValueError(message)
+
+
+def checked_symbols(values):
+    require(isinstance(values, (list, tuple)) and len(values) > 0, "Symbol list must be nonempty")
+    require(all(isinstance(symbol, str) and re.fullmatch(r"[A-Z0-9]+USDT", symbol)
+                for symbol in values), "Invalid Spot symbol")
+    require(len(set(values)) == len(values), "Duplicate configured symbol")
+    return tuple(values)
+
+
+def load_symbols(path=Path(__file__).resolve().parent / "config" / "symbols.json"):
+    return checked_symbols(json.loads(path.read_text(encoding="utf-8")))
+
+
+SYMBOLS = load_symbols()
 
 
 def iso(milliseconds):
@@ -49,6 +66,7 @@ def number(value):
 
 
 def integer(value):
+    require(isinstance(value, (int, str)) and not isinstance(value, bool), "Invalid integer")
     result = int(value)
     require(str(result) == str(value), "Invalid integer")
     return result
@@ -62,11 +80,13 @@ def get_bytes(url, attempts=5):
     """Bounded retries; never retry access restrictions or circumvent them."""
     for attempt in range(attempts):
         retry_after = 0
+        reason = "network timeout/error"
         try:
             request = Request(url, headers={"User-Agent": "crypto-market-exporter/1.0"})
             with urlopen(request, timeout=30) as response:
                 return response.read()
         except HTTPError as error:
+            reason = f"HTTP {error.code}"
             if error.code not in (408, 429, 500, 502, 503, 504):
                 raise
             try:
@@ -79,7 +99,9 @@ def get_bytes(url, attempts=5):
         except (URLError, TimeoutError, socket.timeout):
             if attempt == attempts - 1:
                 raise
-        time.sleep(max(retry_after, min(2 ** attempt, 30)))
+        delay = max(retry_after, min(2 ** attempt, 30))
+        print(f"Retry {attempt + 1}/{attempts - 1}: {reason}; waiting {delay}s", file=sys.stderr)
+        time.sleep(delay)
     raise RuntimeError("Retries exhausted")
 
 
@@ -105,9 +127,10 @@ def parse_kline(raw, symbol, timeframe, cutoff):
     return row
 
 
-def validate_row(row, cutoff):
+def validate_row(row, cutoff, symbols=None):
+    symbols = SYMBOLS if symbols is None else symbols
     require(list(row) == FIELDS, "Invalid columns/order")
-    require(row["source"] == SOURCE and row["symbol"] in SYMBOLS, "Invalid source/symbol")
+    require(row["source"] == SOURCE and row["symbol"] in symbols, "Invalid source/symbol")
     require(row["timeframe"] in DATASETS, "Invalid timeframe")
     opened, closed = millis(row["open_time_utc"]), millis(row["close_time_utc"])
     interval = DATASETS[row["timeframe"]][1]
@@ -137,6 +160,7 @@ def fetch_symbol(symbol, timeframe, start, end, cutoff):
             break
         last = cursor - 1
         for raw in batch:
+            require(isinstance(raw, list) and len(raw) == 12, "Invalid Binance kline")
             opened = integer(raw[0])
             require(cursor <= opened < end and opened > last, "Unordered/duplicate Binance page")
             last = opened
@@ -144,28 +168,39 @@ def fetch_symbol(symbol, timeframe, start, end, cutoff):
             if row is not None:
                 rows.append(row)
         cursor = last + DATASETS[timeframe][1]
-        time.sleep(0.25)  # Phase 0 uses only ~12 weight units, conservatively paced.
+        time.sleep(0.25)  # Sequential requests, far below Binance's weight limit.
     return rows
 
 
-def validate_dataset(rows, timeframe, start, end, cutoff):
+def validate_dataset(rows, timeframe, start, end, cutoff, symbol_history=None, symbols=None):
+    symbols = SYMBOLS if symbols is None else symbols
     require(timeframe in DATASETS, "Invalid dataset")
     interval = DATASETS[timeframe][1]
     require(end - start == DATASETS[timeframe][0] * DAY, "Wrong history window")
     require(end == cutoff // interval * interval, "Wrong closed-candle boundary")
-    by_symbol = {symbol: [] for symbol in SYMBOLS}
+    by_symbol = {symbol: [] for symbol in symbols}
     seen = set()
     for row in rows:
-        validate_row(row, cutoff)
+        validate_row(row, cutoff, symbols)
         require(row["timeframe"] == timeframe, "Mixed timeframes")
         opened = millis(row["open_time_utc"])
+        require(start <= opened < end, "Candle outside requested period")
         key = (row["symbol"], timeframe, opened)
         require(key not in seen, "Duplicate candle")
         seen.add(key)
         by_symbol[row["symbol"]].append(opened)
     expected = list(range(start, end, interval))
+    if symbol_history is not None:
+        require(set(symbol_history) == set(symbols), "Wrong symbol history diagnostics")
     for symbol, times in by_symbol.items():
-        require(times == expected, f"Incomplete/unordered history for {symbol} {timeframe}")
+        symbol_expected = expected
+        if symbol_history is not None:
+            history = symbol_history[symbol]
+            first, last = millis(history["history_start"]), millis(history["history_end"]) + 1
+            require(start <= first < last <= end, f"Invalid actual history for {symbol}")
+            symbol_expected = list(range(first, last, interval))
+            require(history["rows"] == len(times), f"Wrong row count for {symbol}")
+        require(times and times == symbol_expected, f"Incomplete/unordered history for {symbol} {timeframe}")
 
 
 def csv_bytes(rows):
@@ -176,11 +211,12 @@ def csv_bytes(rows):
     return stream.getvalue().encode("utf-8")
 
 
-def split_parts(rows, max_bytes=MAX_BYTES):
+def split_parts(rows, max_bytes=MAX_BYTES, symbols=None):
+    symbols = SYMBOLS if symbols is None else symbols
     require(max_bytes > 0, "Invalid size limit")
     groups = []
     current = []
-    for symbol in SYMBOLS:
+    for symbol in symbols:
         group = [row for row in rows if row["symbol"] == symbol]
         require(group, f"Missing symbol {symbol}")
         if current and len(csv_bytes(current + group)) > max_bytes:
@@ -192,7 +228,18 @@ def split_parts(rows, max_bytes=MAX_BYTES):
     return groups
 
 
-def write_export(directory, datasets, cutoff, max_bytes=MAX_BYTES):
+def history_diagnostics(rows, symbols):
+    result = {}
+    for symbol in symbols:
+        group = [row for row in rows if row["symbol"] == symbol]
+        if group:
+            result[symbol] = {"rows": len(group), "history_start": group[0]["open_time_utc"],
+                              "history_end": group[-1]["close_time_utc"]}
+    return result
+
+
+def write_export(directory, datasets, cutoff, max_bytes=MAX_BYTES, failures=None):
+    failures = failures or {}
     directory.mkdir(parents=True, exist_ok=True)
     manifest = {"schema_version": 1, "generated_at": iso(cutoff), "status": "complete",
                 "source": SOURCE, "part_target_bytes": max_bytes, "datasets": {}}
@@ -200,9 +247,19 @@ def write_export(directory, datasets, cutoff, max_bytes=MAX_BYTES):
         end = cutoff // interval * interval
         start = end - days * DAY
         rows = datasets[timeframe]
-        validate_dataset(rows, timeframe, start, end, cutoff)
+        history = history_diagnostics(rows, SYMBOLS)
+        exported = [symbol for symbol in SYMBOLS if symbol in history]
+        failed = [symbol for symbol in SYMBOLS if symbol not in history]
+        errors = dict(failures.get(timeframe, {}))
+        require(set(errors) <= set(failed), "Failure diagnostics contradict exported symbols")
+        for symbol in failed:
+            errors.setdefault(symbol, "No valid closed candles in requested period")
+        if failed:
+            manifest["status"] = "incomplete"
+            manifest["publication"] = "not_published"
+        validate_dataset(rows, timeframe, start, end, cutoff, history, exported)
         parts = []
-        for index, group in enumerate(split_parts(rows, max_bytes), 1):
+        for index, group in enumerate(split_parts(rows, max_bytes, exported), 1):
             content = csv_bytes(group)
             filename = f"{timeframe}-part-{index:03d}.txt"
             (directory / filename).write_bytes(content)
@@ -212,14 +269,28 @@ def write_export(directory, datasets, cutoff, max_bytes=MAX_BYTES):
                           "sha256": hashlib.sha256(content).hexdigest(),
                           "oversized": len(content) > max_bytes})
         manifest["datasets"][timeframe] = {
-            "history_days": days, "symbols_count": len(SYMBOLS), "rows": len(rows),
-            "history_start": iso(start), "history_end": iso(end - 1),
-            "parts_count": len(parts), "parts": parts}
+            "history_days": days, "symbols_count": len(exported), "rows": len(rows),
+            "history_start": min((h["history_start"] for h in history.values()), default=None),
+            "history_end": max((h["history_end"] for h in history.values()), default=None),
+            "requested_history_start": iso(start), "requested_history_end": iso(end - 1),
+            "parts_count": len(parts), "parts": parts,
+            "requested_symbols": list(SYMBOLS), "exported_symbols": exported,
+            "failed_symbols": failed, "symbol_errors": errors,
+            "symbol_rows": {symbol: history.get(symbol, {}).get("rows", 0) for symbol in SYMBOLS},
+            "symbol_history": history}
     (directory / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return manifest
 
 
-def validate_export(directory, previous=None):
+def validate_previous_export(directory):
+    """Read old snapshots using their declared universe, including legacy Phase 0."""
+    manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+    symbols = checked_symbols(manifest["datasets"]["1d"].get("requested_symbols", PHASE0_SYMBOLS))
+    return validate_export(directory, symbols=symbols)
+
+
+def validate_export(directory, previous=None, symbols=None):
+    symbols = SYMBOLS if symbols is None else checked_symbols(symbols)
     manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
     require(manifest["schema_version"] == 1 and manifest["status"] == "complete", "Invalid manifest")
     require(manifest["source"] == SOURCE, "Invalid manifest source")
@@ -233,12 +304,26 @@ def validate_export(directory, previous=None):
     files = {"manifest.json"}
     for timeframe, (days, interval) in DATASETS.items():
         dataset = manifest["datasets"][timeframe]
-        start, end = millis(dataset["history_start"]), millis(dataset["history_end"]) + 1
+        end = cutoff // interval * interval
+        start = end - days * DAY
+        history = dataset.get("symbol_history")
+        if history is not None:
+            require(dataset["requested_history_start"] == iso(start) and
+                    dataset["requested_history_end"] == iso(end - 1), "Invalid requested window")
+            require(dataset["requested_symbols"] == list(symbols), "Wrong requested symbols")
+            require(dataset["exported_symbols"] == list(symbols), "Wrong exported symbols")
+            require(dataset["failed_symbols"] == [] and dataset["symbol_errors"] == {}, "Failed symbols in complete manifest")
+            require(set(history) == set(symbols), "Wrong symbol history")
+            require(dataset["symbol_rows"] == {symbol: history[symbol]["rows"] for symbol in symbols}, "Wrong symbol_rows")
+            require(dataset["history_start"] == min(h["history_start"] for h in history.values()) and
+                    dataset["history_end"] == max(h["history_end"] for h in history.values()), "Wrong actual dataset history")
+        else:
+            require(dataset["history_start"] == iso(start) and dataset["history_end"] == iso(end - 1), "Invalid legacy history")
         require(dataset["history_days"] == days, "Invalid history_days")
-        require(dataset["symbols_count"] == len(SYMBOLS), "Invalid symbol count")
+        require(dataset["symbols_count"] == len(symbols), "Invalid symbol count")
         require(dataset["parts_count"] == len(dataset["parts"]) > 0, "Invalid part count")
         if previous:
-            require(end > millis(previous["datasets"][timeframe]["history_end"]), "Dataset regressed")
+            require(millis(dataset["history_end"]) >= millis(previous["datasets"][timeframe]["history_end"]), "Dataset regressed")
         rows, seen_symbols = [], set()
         for index, part in enumerate(dataset["parts"], 1):
             filename = f"{timeframe}-part-{index:03d}.txt"
@@ -250,18 +335,18 @@ def validate_export(directory, previous=None):
             reader = csv.DictReader(io.StringIO(content.decode("utf-8"), newline=""))
             require(reader.fieldnames == FIELDS, "Invalid CSV header")
             part_rows = list(reader)
-            symbols = list(dict.fromkeys(row["symbol"] for row in part_rows))
+            part_symbols = list(dict.fromkeys(row["symbol"] for row in part_rows))
             require(part["rows"] == len(part_rows) > 0, "Wrong part rows")
-            require(part["symbols"] == symbols and part["symbols_count"] == len(symbols), "Wrong part symbols")
-            require(not seen_symbols.intersection(symbols), "Symbol split between parts")
-            seen_symbols.update(symbols)
+            require(part["symbols"] == part_symbols and part["symbols_count"] == len(part_symbols), "Wrong part symbols")
+            require(not seen_symbols.intersection(part_symbols), "Symbol split between parts")
+            seen_symbols.update(part_symbols)
             oversized = len(content) > target
             require(part["oversized"] == oversized, "Incorrect oversized flag")
-            require(not oversized or len(symbols) == 1, "Oversized multi-symbol part")
+            require(not oversized or len(part_symbols) == 1, "Oversized multi-symbol part")
             rows.extend(part_rows)
         require(dataset["rows"] == len(rows), "Wrong dataset rows")
-        require(seen_symbols == set(SYMBOLS), "Missing expected symbols")
-        validate_dataset(rows, timeframe, start, end, cutoff)
+        require(seen_symbols == set(symbols), "Missing expected symbols")
+        validate_dataset(rows, timeframe, start, end, cutoff, history, symbols)
     require({path.name for path in directory.iterdir()} == files, "Unexpected export files")
     return manifest
 
@@ -273,7 +358,7 @@ def publish(staging, latest, previous=None):
     two-rename swap is for a single CLI writer, not a live web-server directory.
     """
     if latest.exists():
-        previous = validate_export(latest)
+        previous = validate_previous_export(latest)
     manifest = validate_export(staging, previous)
     backup = latest.with_name(".latest-backup")
     require(not backup.exists(), "Backup exists; inspect/recover previous interrupted run")
@@ -292,19 +377,33 @@ def publish(staging, latest, previous=None):
     return manifest
 
 
-def export(output, previous=None):
+def export(output, previous=None, diagnostics=Path(".local/incomplete-manifest.json")):
     output.mkdir(parents=True, exist_ok=True)
     cutoff = integer(api("/api/v3/time")["serverTime"])
     datasets = {}
+    failures = {}
     for timeframe, (days, interval) in DATASETS.items():
         end = cutoff // interval * interval
         datasets[timeframe] = []
+        failures[timeframe] = {}
         for symbol in SYMBOLS:
             print(f"Fetching {symbol} {timeframe}", flush=True)
-            datasets[timeframe].extend(fetch_symbol(symbol, timeframe, end - days * DAY, end, cutoff))
+            try:
+                rows = fetch_symbol(symbol, timeframe, end - days * DAY, end, cutoff)
+                require(rows, "No valid closed candles in requested period")
+                history = history_diagnostics(rows, (symbol,))
+                validate_dataset(rows, timeframe, end - days * DAY, end, cutoff, history, (symbol,))
+                datasets[timeframe].extend(rows)
+            except (OSError, ValueError, InvalidOperation) as error:
+                failures[timeframe][symbol] = f"{type(error).__name__}: {error}"
+                print(f"FAILED {symbol} {timeframe}: {failures[timeframe][symbol]}", file=sys.stderr, flush=True)
     staging = Path(tempfile.mkdtemp(prefix=".export-", dir=output))
     try:
-        write_export(staging, datasets, cutoff)
+        manifest = write_export(staging, datasets, cutoff, failures=failures)
+        if manifest["status"] != "complete":
+            diagnostics.parent.mkdir(parents=True, exist_ok=True)
+            diagnostics.write_bytes((staging / "manifest.json").read_bytes())
+            raise ValueError(f"Incomplete export; latest unchanged. Diagnostic manifest: {diagnostics}")
         return publish(staging, output / "latest", previous)
     finally:
         if staging.exists():

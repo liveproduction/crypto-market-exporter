@@ -80,6 +80,9 @@ class ParsingTests(unittest.TestCase):
 class ExportTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.phase0 = patch.object(e, "SYMBOLS", e.PHASE0_SYMBOLS)
+        cls.phase0.start()
+        cls.addClassCleanup(cls.phase0.stop)
         cls.datasets = fixture()
 
     def setUp(self):
