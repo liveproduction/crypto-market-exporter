@@ -63,7 +63,7 @@ See [BOOTSTRAP_SPEC.md](BOOTSTRAP_SPEC.md) and issue #1.
 
 ## V1.1 production universe
 
-Python 3.11+; **no third-party dependencies**. The 47 Spot symbols are configured
+Python 3.11+; **no third-party dependencies**. The 48 Spot symbols are configured
 in [`config/symbols.json`](config/symbols.json), a manually editable ordered JSON
 list. Empty, duplicate or malformed symbols are rejected. Phase 0 was validated
 through the GitHub connector at data commit

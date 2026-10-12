@@ -11,7 +11,7 @@ import publish_data as p
 from test_exporter import CUTOFF, fixture, kline
 
 
-EXPECTED_SYMBOLS = tuple("AAVEUSDT ADAUSDT AEROUSDT AIXBTUSDT ALGOUSDT APTUSDT ASTERUSDT AVAXUSDT BNBUSDT BONKUSDT BTCUSDT CAKEUSDT COOKIEUSDT ENAUSDT ETHUSDT FETUSDT GMXUSDT HBARUSDT HEIUSDT ICPUSDT INJUSDT JUPUSDT LDOUSDT LINKUSDT LTCUSDT METUSDT MORPHOUSDT NEARUSDT ORCAUSDT PENGUUSDT PEPEUSDT PUMPUSDT RAYUSDT RENDERUSDT SOLUSDT STXUSDT SUIUSDT SUSDT SYNUSDT SYRUPUSDT TAOUSDT TRXUSDT VIRTUALUSDT WIFUSDT XLMUSDT XRPUSDT ZECUSDT".split())
+EXPECTED_SYMBOLS = tuple("AAVEUSDT ADAUSDT AEROUSDT AIXBTUSDT ALGOUSDT APTUSDT ASTERUSDT AVAXUSDT BNBUSDT BONKUSDT BTCUSDT CAKEUSDT COOKIEUSDT DOGEUSDT ENAUSDT ETHUSDT FETUSDT GMXUSDT HBARUSDT HEIUSDT ICPUSDT INJUSDT JUPUSDT LDOUSDT LINKUSDT LTCUSDT METUSDT MORPHOUSDT NEARUSDT ORCAUSDT PENGUUSDT PEPEUSDT PUMPUSDT RAYUSDT RENDERUSDT SOLUSDT STXUSDT SUIUSDT SUSDT SYNUSDT SYRUPUSDT TAOUSDT TRXUSDT VIRTUALUSDT WIFUSDT XLMUSDT XRPUSDT ZECUSDT".split())
 
 
 def production_fixture():
@@ -30,7 +30,7 @@ def production_fixture():
 class ConfigurationTests(unittest.TestCase):
     def test_exact_production_universe(self):
         self.assertEqual(e.load_symbols(), EXPECTED_SYMBOLS)
-        self.assertEqual(len(e.load_symbols()), 47)
+        self.assertEqual(len(e.load_symbols()), len(EXPECTED_SYMBOLS))
 
     def test_bad_configuration(self):
         for value in [[], ["BTCUSDT", "BTCUSDT"], ["btcUSDT"], ["BTC/USD"], {}, [None]]:
@@ -54,14 +54,14 @@ class ProductionExportTests(unittest.TestCase):
         result = e.validate_export(self.latest)
         for timeframe, dataset in result["datasets"].items():
             self.assertGreater(dataset["parts_count"], 1)
-            self.assertEqual(dataset["symbols_count"], 47)
+            self.assertEqual(dataset["symbols_count"], len(EXPECTED_SYMBOLS))
             self.assertEqual(dataset["requested_symbols"], list(EXPECTED_SYMBOLS))
             self.assertEqual(dataset["exported_symbols"], list(EXPECTED_SYMBOLS))
             self.assertEqual(dataset["failed_symbols"], [])
             self.assertEqual(sum(part["rows"] for part in dataset["parts"]), dataset["rows"])
             symbols = [symbol for part in dataset["parts"] for symbol in part["symbols"]]
             self.assertEqual(symbols, list(EXPECTED_SYMBOLS))
-            self.assertEqual(len(set(symbols)), 47)
+            self.assertEqual(len(set(symbols)), len(EXPECTED_SYMBOLS))
             self.assertEqual(dataset["symbol_rows"]["AEROUSDT"], 22)
             self.assertGreater(dataset["symbol_history"]["AEROUSDT"]["history_start"], dataset["requested_history_start"])
             for part in dataset["parts"]:
@@ -158,7 +158,7 @@ class ProductionExportTests(unittest.TestCase):
         files = {f"latest/{path.name}": path.read_bytes() for path in old.iterdir()}
         p.materialize(files, self.root / "old-materialized", previous=True)
         with self.assertRaises(ValueError):
-            e.validate_export(old)  # Old data cannot be republished as the 47-symbol candidate.
+            e.validate_export(old)  # Old data cannot be republished as the production candidate.
 
 
 if __name__ == "__main__":
