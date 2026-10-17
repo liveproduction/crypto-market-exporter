@@ -1,0 +1,1005 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-17T04:24:18.985Z",
+  "status": "complete",
+  "source": "BINANCE_PUBLIC_SPOT",
+  "part_target_bytes": 3500000,
+  "datasets": {
+    "1d": {
+      "history_days": 1826,
+      "symbols_count": 48,
+      "rows": 62610,
+      "history_start": "2021-10-17T00:00:00.000Z",
+      "history_end": "2026-10-16T23:59:59.999Z",
+      "requested_history_start": "2021-10-17T00:00:00.000Z",
+      "requested_history_end": "2026-10-16T23:59:59.999Z",
+      "parts_count": 6,
+      "parts": [
+        {
+          "part": 1,
+          "filename": "1d-part-001.txt",
+          "bytes": 3221823,
+          "rows": 11702,
+          "symbols_count": 9,
+          "symbols": [
+            "AAVEUSDT",
+            "ADAUSDT",
+            "AEROUSDT",
+            "AIXBTUSDT",
+            "ALGOUSDT",
+            "APTUSDT",
+            "ASTERUSDT",
+            "AVAXUSDT",
+            "BNBUSDT"
+          ],
+          "sha256": "db0c5404f0566ddad86956c8fca34a6394e2300f23ae6aac9e43f53fb80593ec",
+          "oversized": false
+        },
+        {
+          "part": 2,
+          "filename": "1d-part-002.txt",
+          "bytes": 3272505,
+          "rows": 11740,
+          "symbols_count": 8,
+          "symbols": [
+            "BONKUSDT",
+            "BTCUSDT",
+            "CAKEUSDT",
+            "COOKIEUSDT",
+            "DOGEUSDT",
+            "ENAUSDT",
+            "ETHUSDT",
+            "FETUSDT"
+          ],
+          "sha256": "0d1874dca22a42a21c31e0d9b58ca1a29ad4f90dfce82101c83964345d729220",
+          "oversized": false
+        },
+        {
+          "part": 3,
+          "filename": "1d-part-003.txt",
+          "bytes": 3256825,
+          "rows": 12000,
+          "symbols_count": 8,
+          "symbols": [
+            "GMXUSDT",
+            "HBARUSDT",
+            "HEIUSDT",
+            "ICPUSDT",
+            "INJUSDT",
+            "JUPUSDT",
+            "LDOUSDT",
+            "LINKUSDT"
+          ],
+          "sha256": "dbe84a1efb99814d604de90b7671e8c7e5816ffd0294e8d7e827f7af52042697",
+          "oversized": false
+        },
+        {
+          "part": 4,
+          "filename": "1d-part-004.txt",
+          "bytes": 3242892,
+          "rows": 11845,
+          "symbols_count": 11,
+          "symbols": [
+            "LTCUSDT",
+            "METUSDT",
+            "MORPHOUSDT",
+            "NEARUSDT",
+            "ORCAUSDT",
+            "PENGUUSDT",
+            "PEPEUSDT",
+            "PUMPUSDT",
+            "RAYUSDT",
+            "RENDERUSDT",
+            "SOLUSDT"
+          ],
+          "sha256": "636ac811b74be5c8deae477611c127cbe227af25d3faeeb0d87e2843c9461a13",
+          "oversized": false
+        },
+        {
+          "part": 5,
+          "filename": "1d-part-005.txt",
+          "bytes": 3190812,
+          "rows": 11671,
+          "symbols_count": 10,
+          "symbols": [
+            "STXUSDT",
+            "SUIUSDT",
+            "SUSDT",
+            "SYNUSDT",
+            "SYRUPUSDT",
+            "TAOUSDT",
+            "TRXUSDT",
+            "VIRTUALUSDT",
+            "WIFUSDT",
+            "XLMUSDT"
+          ],
+          "sha256": "56c610356f5763bf970aaf8e0972c421b8c1bff7e6e19314f1311de97c3810d5",
+          "oversized": false
+        },
+        {
+          "part": 6,
+          "filename": "1d-part-006.txt",
+          "bytes": 1005826,
+          "rows": 3652,
+          "symbols_count": 2,
+          "symbols": [
+            "XRPUSDT",
+            "ZECUSDT"
+          ],
+          "sha256": "cf2f7afacaa9f527250ec726c3d6c39c306ad0fafc8d044ab2a6203e033882f0",
+          "oversized": false
+        }
+      ],
+      "requested_symbols": [
+        "AAVEUSDT",
+        "ADAUSDT",
+        "AEROUSDT",
+        "AIXBTUSDT",
+        "ALGOUSDT",
+        "APTUSDT",
+        "ASTERUSDT",
+        "AVAXUSDT",
+        "BNBUSDT",
+        "BONKUSDT",
+        "BTCUSDT",
+        "CAKEUSDT",
+        "COOKIEUSDT",
+        "DOGEUSDT",
+        "ENAUSDT",
+        "ETHUSDT",
+        "FETUSDT",
+        "GMXUSDT",
+        "HBARUSDT",
+        "HEIUSDT",
+        "ICPUSDT",
+        "INJUSDT",
+        "JUPUSDT",
+        "LDOUSDT",
+        "LINKUSDT",
+        "LTCUSDT",
+        "METUSDT",
+        "MORPHOUSDT",
+        "NEARUSDT",
+        "ORCAUSDT",
+        "PENGUUSDT",
+        "PEPEUSDT",
+        "PUMPUSDT",
+        "RAYUSDT",
+        "RENDERUSDT",
+        "SOLUSDT",
+        "STXUSDT",
+        "SUIUSDT",
+        "SUSDT",
+        "SYNUSDT",
+        "SYRUPUSDT",
+        "TAOUSDT",
+        "TRXUSDT",
+        "VIRTUALUSDT",
+        "WIFUSDT",
+        "XLMUSDT",
+        "XRPUSDT",
+        "ZECUSDT"
+      ],
+      "exported_symbols": [
+        "AAVEUSDT",
+        "ADAUSDT",
+        "AEROUSDT",
+        "AIXBTUSDT",
+        "ALGOUSDT",
+        "APTUSDT",
+        "ASTERUSDT",
+        "AVAXUSDT",
+        "BNBUSDT",
+        "BONKUSDT",
+        "BTCUSDT",
+        "CAKEUSDT",
+        "COOKIEUSDT",
+        "DOGEUSDT",
+        "ENAUSDT",
+        "ETHUSDT",
+        "FETUSDT",
+        "GMXUSDT",
+        "HBARUSDT",
+        "HEIUSDT",
+        "ICPUSDT",
+        "INJUSDT",
+        "JUPUSDT",
+        "LDOUSDT",
+        "LINKUSDT",
+        "LTCUSDT",
+        "METUSDT",
+        "MORPHOUSDT",
+        "NEARUSDT",
+        "ORCAUSDT",
+        "PENGUUSDT",
+        "PEPEUSDT",
+        "PUMPUSDT",
+        "RAYUSDT",
+        "RENDERUSDT",
+        "SOLUSDT",
+        "STXUSDT",
+        "SUIUSDT",
+        "SUSDT",
+        "SYNUSDT",
+        "SYRUPUSDT",
+        "TAOUSDT",
+        "TRXUSDT",
+        "VIRTUALUSDT",
+        "WIFUSDT",
+        "XLMUSDT",
+        "XRPUSDT",
+        "ZECUSDT"
+      ],
+      "failed_symbols": [],
+      "symbol_errors": {},
+      "symbol_rows": {
+        "AAVEUSDT": 1826,
+        "ADAUSDT": 1826,
+        "AEROUSDT": 92,
+        "AIXBTUSDT": 645,
+        "ALGOUSDT": 1826,
+        "APTUSDT": 1459,
+        "ASTERUSDT": 376,
+        "AVAXUSDT": 1826,
+        "BNBUSDT": 1826,
+        "BONKUSDT": 1037,
+        "BTCUSDT": 1826,
+        "CAKEUSDT": 1826,
+        "COOKIEUSDT": 645,
+        "DOGEUSDT": 1826,
+        "ENAUSDT": 928,
+        "ETHUSDT": 1826,
+        "FETUSDT": 1826,
+        "GMXUSDT": 1473,
+        "HBARUSDT": 1826,
+        "HEIUSDT": 611,
+        "ICPUSDT": 1826,
+        "INJUSDT": 1826,
+        "JUPUSDT": 990,
+        "LDOUSDT": 1622,
+        "LINKUSDT": 1826,
+        "LTCUSDT": 1826,
+        "METUSDT": 338,
+        "MORPHOUSDT": 379,
+        "NEARUSDT": 1826,
+        "ORCAUSDT": 680,
+        "PENGUUSDT": 669,
+        "PEPEUSDT": 1261,
+        "PUMPUSDT": 401,
+        "RAYUSDT": 1826,
+        "RENDERUSDT": 813,
+        "SOLUSDT": 1826,
+        "STXUSDT": 1826,
+        "SUIUSDT": 1263,
+        "SUSDT": 639,
+        "SYNUSDT": 1333,
+        "SYRUPUSDT": 529,
+        "TAOUSDT": 919,
+        "TRXUSDT": 1826,
+        "VIRTUALUSDT": 554,
+        "WIFUSDT": 956,
+        "XLMUSDT": 1826,
+        "XRPUSDT": 1826,
+        "ZECUSDT": 1826
+      },
+      "symbol_history": {
+        "AAVEUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "ADAUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "AEROUSDT": {
+          "rows": 92,
+          "history_start": "2026-07-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "AIXBTUSDT": {
+          "rows": 645,
+          "history_start": "2025-01-10T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "ALGOUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "APTUSDT": {
+          "rows": 1459,
+          "history_start": "2022-10-19T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "ASTERUSDT": {
+          "rows": 376,
+          "history_start": "2025-10-06T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "AVAXUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "BNBUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "BONKUSDT": {
+          "rows": 1037,
+          "history_start": "2023-12-15T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "BTCUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "CAKEUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "COOKIEUSDT": {
+          "rows": 645,
+          "history_start": "2025-01-10T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "DOGEUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "ENAUSDT": {
+          "rows": 928,
+          "history_start": "2024-04-02T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "ETHUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "FETUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "GMXUSDT": {
+          "rows": 1473,
+          "history_start": "2022-10-05T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "HBARUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "HEIUSDT": {
+          "rows": 611,
+          "history_start": "2025-02-13T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "ICPUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "INJUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "JUPUSDT": {
+          "rows": 990,
+          "history_start": "2024-01-31T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "LDOUSDT": {
+          "rows": 1622,
+          "history_start": "2022-05-09T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "LINKUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "LTCUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "METUSDT": {
+          "rows": 338,
+          "history_start": "2025-11-13T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "MORPHOUSDT": {
+          "rows": 379,
+          "history_start": "2025-10-03T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "NEARUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "ORCAUSDT": {
+          "rows": 680,
+          "history_start": "2024-12-06T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "PENGUUSDT": {
+          "rows": 669,
+          "history_start": "2024-12-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "PEPEUSDT": {
+          "rows": 1261,
+          "history_start": "2023-05-05T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "PUMPUSDT": {
+          "rows": 401,
+          "history_start": "2025-09-11T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "RAYUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "RENDERUSDT": {
+          "rows": 813,
+          "history_start": "2024-07-26T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "SOLUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "STXUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "SUIUSDT": {
+          "rows": 1263,
+          "history_start": "2023-05-03T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "SUSDT": {
+          "rows": 639,
+          "history_start": "2025-01-16T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "SYNUSDT": {
+          "rows": 1333,
+          "history_start": "2023-02-22T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "SYRUPUSDT": {
+          "rows": 529,
+          "history_start": "2025-05-06T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "TAOUSDT": {
+          "rows": 919,
+          "history_start": "2024-04-11T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "TRXUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "VIRTUALUSDT": {
+          "rows": 554,
+          "history_start": "2025-04-11T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "WIFUSDT": {
+          "rows": 956,
+          "history_start": "2024-03-05T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "XLMUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "XRPUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        },
+        "ZECUSDT": {
+          "rows": 1826,
+          "history_start": "2021-10-17T00:00:00.000Z",
+          "history_end": "2026-10-16T23:59:59.999Z"
+        }
+      }
+    },
+    "4h": {
+      "history_days": 90,
+      "symbols_count": 48,
+      "rows": 25920,
+      "history_start": "2026-07-19T04:00:00.000Z",
+      "history_end": "2026-10-17T03:59:59.999Z",
+      "requested_history_start": "2026-07-19T04:00:00.000Z",
+      "requested_history_end": "2026-10-17T03:59:59.999Z",
+      "parts_count": 2,
+      "parts": [
+        {
+          "part": 1,
+          "filename": "4h-part-001.txt",
+          "bytes": 3454295,
+          "rows": 12960,
+          "symbols_count": 24,
+          "symbols": [
+            "AAVEUSDT",
+            "ADAUSDT",
+            "AEROUSDT",
+            "AIXBTUSDT",
+            "ALGOUSDT",
+            "APTUSDT",
+            "ASTERUSDT",
+            "AVAXUSDT",
+            "BNBUSDT",
+            "BONKUSDT",
+            "BTCUSDT",
+            "CAKEUSDT",
+            "COOKIEUSDT",
+            "DOGEUSDT",
+            "ENAUSDT",
+            "ETHUSDT",
+            "FETUSDT",
+            "GMXUSDT",
+            "HBARUSDT",
+            "HEIUSDT",
+            "ICPUSDT",
+            "INJUSDT",
+            "JUPUSDT",
+            "LDOUSDT"
+          ],
+          "sha256": "0e212874db9401139fb4116fe4f188c5e4aac1936a2b7229dc9c702ae756b31b",
+          "oversized": false
+        },
+        {
+          "part": 2,
+          "filename": "4h-part-002.txt",
+          "bytes": 3448773,
+          "rows": 12960,
+          "symbols_count": 24,
+          "symbols": [
+            "LINKUSDT",
+            "LTCUSDT",
+            "METUSDT",
+            "MORPHOUSDT",
+            "NEARUSDT",
+            "ORCAUSDT",
+            "PENGUUSDT",
+            "PEPEUSDT",
+            "PUMPUSDT",
+            "RAYUSDT",
+            "RENDERUSDT",
+            "SOLUSDT",
+            "STXUSDT",
+            "SUIUSDT",
+            "SUSDT",
+            "SYNUSDT",
+            "SYRUPUSDT",
+            "TAOUSDT",
+            "TRXUSDT",
+            "VIRTUALUSDT",
+            "WIFUSDT",
+            "XLMUSDT",
+            "XRPUSDT",
+            "ZECUSDT"
+          ],
+          "sha256": "00b7098dec78af67b8920b15363796f7c5772d399d8e82d613eaacc95728a975",
+          "oversized": false
+        }
+      ],
+      "requested_symbols": [
+        "AAVEUSDT",
+        "ADAUSDT",
+        "AEROUSDT",
+        "AIXBTUSDT",
+        "ALGOUSDT",
+        "APTUSDT",
+        "ASTERUSDT",
+        "AVAXUSDT",
+        "BNBUSDT",
+        "BONKUSDT",
+        "BTCUSDT",
+        "CAKEUSDT",
+        "COOKIEUSDT",
+        "DOGEUSDT",
+        "ENAUSDT",
+        "ETHUSDT",
+        "FETUSDT",
+        "GMXUSDT",
+        "HBARUSDT",
+        "HEIUSDT",
+        "ICPUSDT",
+        "INJUSDT",
+        "JUPUSDT",
+        "LDOUSDT",
+        "LINKUSDT",
+        "LTCUSDT",
+        "METUSDT",
+        "MORPHOUSDT",
+        "NEARUSDT",
+        "ORCAUSDT",
+        "PENGUUSDT",
+        "PEPEUSDT",
+        "PUMPUSDT",
+        "RAYUSDT",
+        "RENDERUSDT",
+        "SOLUSDT",
+        "STXUSDT",
+        "SUIUSDT",
+        "SUSDT",
+        "SYNUSDT",
+        "SYRUPUSDT",
+        "TAOUSDT",
+        "TRXUSDT",
+        "VIRTUALUSDT",
+        "WIFUSDT",
+        "XLMUSDT",
+        "XRPUSDT",
+        "ZECUSDT"
+      ],
+      "exported_symbols": [
+        "AAVEUSDT",
+        "ADAUSDT",
+        "AEROUSDT",
+        "AIXBTUSDT",
+        "ALGOUSDT",
+        "APTUSDT",
+        "ASTERUSDT",
+        "AVAXUSDT",
+        "BNBUSDT",
+        "BONKUSDT",
+        "BTCUSDT",
+        "CAKEUSDT",
+        "COOKIEUSDT",
+        "DOGEUSDT",
+        "ENAUSDT",
+        "ETHUSDT",
+        "FETUSDT",
+        "GMXUSDT",
+        "HBARUSDT",
+        "HEIUSDT",
+        "ICPUSDT",
+        "INJUSDT",
+        "JUPUSDT",
+        "LDOUSDT",
+        "LINKUSDT",
+        "LTCUSDT",
+        "METUSDT",
+        "MORPHOUSDT",
+        "NEARUSDT",
+        "ORCAUSDT",
+        "PENGUUSDT",
+        "PEPEUSDT",
+        "PUMPUSDT",
+        "RAYUSDT",
+        "RENDERUSDT",
+        "SOLUSDT",
+        "STXUSDT",
+        "SUIUSDT",
+        "SUSDT",
+        "SYNUSDT",
+        "SYRUPUSDT",
+        "TAOUSDT",
+        "TRXUSDT",
+        "VIRTUALUSDT",
+        "WIFUSDT",
+        "XLMUSDT",
+        "XRPUSDT",
+        "ZECUSDT"
+      ],
+      "failed_symbols": [],
+      "symbol_errors": {},
+      "symbol_rows": {
+        "AAVEUSDT": 540,
+        "ADAUSDT": 540,
+        "AEROUSDT": 540,
+        "AIXBTUSDT": 540,
+        "ALGOUSDT": 540,
+        "APTUSDT": 540,
+        "ASTERUSDT": 540,
+        "AVAXUSDT": 540,
+        "BNBUSDT": 540,
+        "BONKUSDT": 540,
+        "BTCUSDT": 540,
+        "CAKEUSDT": 540,
+        "COOKIEUSDT": 540,
+        "DOGEUSDT": 540,
+        "ENAUSDT": 540,
+        "ETHUSDT": 540,
+        "FETUSDT": 540,
+        "GMXUSDT": 540,
+        "HBARUSDT": 540,
+        "HEIUSDT": 540,
+        "ICPUSDT": 540,
+        "INJUSDT": 540,
+        "JUPUSDT": 540,
+        "LDOUSDT": 540,
+        "LINKUSDT": 540,
+        "LTCUSDT": 540,
+        "METUSDT": 540,
+        "MORPHOUSDT": 540,
+        "NEARUSDT": 540,
+        "ORCAUSDT": 540,
+        "PENGUUSDT": 540,
+        "PEPEUSDT": 540,
+        "PUMPUSDT": 540,
+        "RAYUSDT": 540,
+        "RENDERUSDT": 540,
+        "SOLUSDT": 540,
+        "STXUSDT": 540,
+        "SUIUSDT": 540,
+        "SUSDT": 540,
+        "SYNUSDT": 540,
+        "SYRUPUSDT": 540,
+        "TAOUSDT": 540,
+        "TRXUSDT": 540,
+        "VIRTUALUSDT": 540,
+        "WIFUSDT": 540,
+        "XLMUSDT": 540,
+        "XRPUSDT": 540,
+        "ZECUSDT": 540
+      },
+      "symbol_history": {
+        "AAVEUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "ADAUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "AEROUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "AIXBTUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "ALGOUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "APTUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "ASTERUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "AVAXUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "BNBUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "BONKUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "BTCUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "CAKEUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "COOKIEUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "DOGEUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "ENAUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "ETHUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "FETUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "GMXUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "HBARUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "HEIUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "ICPUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "INJUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "JUPUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "LDOUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "LINKUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "LTCUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "METUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "MORPHOUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "NEARUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "ORCAUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "PENGUUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "PEPEUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "PUMPUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "RAYUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "RENDERUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "SOLUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "STXUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "SUIUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "SUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "SYNUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "SYRUPUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "TAOUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "TRXUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "VIRTUALUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "WIFUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "XLMUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "XRPUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        },
+        "ZECUSDT": {
+          "rows": 540,
+          "history_start": "2026-07-19T04:00:00.000Z",
+          "history_end": "2026-10-17T03:59:59.999Z"
+        }
+      }
+    }
+  }
+}
